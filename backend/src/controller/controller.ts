@@ -9,10 +9,20 @@ export abstract class BaseController {
         let result : string;
         if (matched) {
             result = await BaseModel.findAll(matched[0])
+            res.status(200).send(result)
         } else {
             result = "An error occured on database access."
+            res.status(400).send(result)
         }
-        res.send(result)
+        
+    }
+    static async createEmployee(req : express.Request, res : express.Response) {
+        const matched : RegExpMatchArray | null = req.path.match(/([\w]+)(?=$)/g)
+        if (typeof req.query.username === "string" && typeof req.query.password === "string" && matched) {
+            const result = await(BaseModel.createEmployee(matched[0], req.query.username, req.query.password))
+        } else {
+            res.status(400).send("Incorrect formatting.")
+        }
     }
 
 }
