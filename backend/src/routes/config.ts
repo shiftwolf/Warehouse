@@ -24,9 +24,20 @@ export class Routes {
         
         this.app.route(`/${version}/employees`)
             .get(BaseController.findAll)
+            .post(
+                // e.g. ?username=wolf?password=hunter2?firstname=Timo?lastname=Wolf?permissions=1
+                BaseController.createEmployee
+            )
         
         this.app.route(`/${version}/products`)
             .get(BaseController.findAll)
+            .post(
+                // e.g. ?ean=1234567890123?name=Superglue?amount=10
+                BaseController.createProduct
+            )
+        
+        this.app.route(`/${version}/products/:id`)
+            .put(BaseController.updateProduct)
             
         this.app.route(`/${version}/orders`)
             .get(BaseController.findAll)
