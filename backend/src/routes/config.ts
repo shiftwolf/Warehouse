@@ -1,5 +1,5 @@
 import express from "express"
-import { BaseController } from "../controller/controller"
+import { Controller } from "../controller/controller"
 
 
 export class Routes {
@@ -20,27 +20,38 @@ export class Routes {
             })
         
         this.app.route(`/${version}/customers`)
-            .get(BaseController.findAll)
+            .get(Controller.findAll)
+            .post(
+                // name / country / adress1 / (adress2) / (state/province) / (zipcode) 
+                Controller.createCustomer
+            )
+        
+        this.app.route(`/${version}/customers/:id`)
+        .get(Controller.findOne)
+        .put(
+            // name / country / adress1 / (adress2) / (state/province) / (zipcode) 
+            Controller.updateCustomer
+        )
         
         this.app.route(`/${version}/employees`)
-            .get(BaseController.findAll)
+            .get(Controller.findAll)
             .post(
                 // e.g. ?username=wolf?password=hunter2?firstname=Timo?lastname=Wolf?permissions=1
-                BaseController.createEmployee
+                Controller.createEmployee
             )
         
         this.app.route(`/${version}/products`)
-            .get(BaseController.findAll)
+            .get(Controller.findAll)
             .post(
                 // e.g. ?ean=1234567890123?name=Superglue?amount=10
-                BaseController.createProduct
+                Controller.createProduct
             )
         
-        this.app.route(`/${version}/products/:id`)
-            .put(BaseController.updateProduct)
+        this.app.route(`/${version}/products/:ean`)
+            .put(Controller.updateProduct)
             
         this.app.route(`/${version}/orders`)
-            .get(BaseController.findAll)
+            .get(Controller.findAll)
         
         this.app.route(`/${version}/order_contents/:fkOrderID`)   
             .get()
