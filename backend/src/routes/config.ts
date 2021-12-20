@@ -22,16 +22,17 @@ export class Routes {
         this.app.route(`/${version}/customers`)
             .get(Controller.findAll)
             .post(
-                // name / country / adress1 / (adress2) / (state/province) / (zipcode) 
+                // name / country / address1 / (address2) / (state/province) / (zipcode) 
                 Controller.createCustomer
             )
         
         this.app.route(`/${version}/customers/:id`)
-        .get(Controller.findOne)
-        .put(
-            // name / country / adress1 / (adress2) / (state/province) / (zipcode) 
-            Controller.updateCustomer
-        )
+            .get(Controller.findOne)
+            .put(
+                // name / country / adress1 / (adress2) / (state/province) / (zipcode) 
+                Controller.updateCustomer
+            )
+            .delete(Controller.deleteOne)
         
         this.app.route(`/${version}/employees`)
             .get(Controller.findAll)
@@ -39,6 +40,10 @@ export class Routes {
                 // e.g. ?username=wolf?password=hunter2?firstname=Timo?lastname=Wolf?permissions=1
                 Controller.createEmployee
             )
+        
+        this.app.route(`/${version}/employees/:id`)
+            .get(Controller.findOne)
+            .delete(Controller.deleteOne)
         
         this.app.route(`/${version}/products`)
             .get(Controller.findAll)
@@ -49,12 +54,17 @@ export class Routes {
         
         this.app.route(`/${version}/products/:ean`)
             .put(Controller.updateProduct)
+            .delete
             
         this.app.route(`/${version}/orders`)
             .get(Controller.findAll)
+            .post(
+                // see order.ts
+                Controller.createOrder
+            )
         
         this.app.route(`/${version}/order_contents/:fkOrderID`)   
-            .get()
+            .get(Controller.findOrderContents)
 
         return this.app
     }
