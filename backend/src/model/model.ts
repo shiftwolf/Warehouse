@@ -1,6 +1,8 @@
 import { sql, Request, sequentialSQL } from "../connectors/db"
 import { Customer } from "./customer"
-import { Order, OrderContent } from "../model/order";
+import { Order, OrderContent } from "../model/order"
+import { Product } from "./product"
+import { Employee } from "./employee"
 import bcrypt from "bcrypt"
 
 
@@ -28,25 +30,39 @@ export abstract class Model {
         return res
     }
 
-    static async createEmployee (username: string, password: string,
-        firstname: string, lastname: string, permissions: string) {
-        const hash = bcrypt.hashSync(password, 10);
+    static async createEmployee (employee : Employee) {
+        const hash = bcrypt.hashSync(employee.password, 10);
         const res = await sql(new Request(
-            `insert into employees (username, password, firstname, lastname, permissions) values (?,?,?,?,?);`, 
-            [username, password, firstname, lastname, permissions]))
-        return res
-    }
-    static async createProduct (ean: string, name: string, amount: string) {
-        const res = await sql(new Request(
-            `insert into products (ean, name, amount) values (?,?,?);`, 
-            [ean, name, amount]))
+            `insert into employees (username, hashedpw, name, permissions) values (?,?,?,?);`, 
+            [employee.username, hash, employee.name, employee.permissions]))
         return res
     }
 
-    static async updateProduct (name: string, amount: string, ean : string) {
-        const res = await sql(new Request(
-            `update products set name = ?, amount = ? where ean = ?;`, 
-            [name, amount, ean]))
+    static async createProduct (product : Product) {
+        const res = product.location !== undefined 
+            ? await sql(new Request(
+                `insert into products (ean, name, amount, location) values (?,?,?,?);`, 
+                [product.ean, product.name, product.amount, product.location]))
+            : await sql(new Request(
+                `insert into products (ean, name, amount, location) values (?,?,?);`, 
+                [product.ean, product.name, product.amount]))
+        return res
+    }
+
+    static async findProduct (id : string) {
+        console.log(id)
+        const res = await sql(new Request(`select * from products where ean = ?;`, [id]))
+        return res
+    }
+
+    static async updateProduct (product : Product) {
+        const res = product.location !== undefined 
+            ? await sql(new Request(
+                `update products set name = ?, amount = ? where ean = ?;`, 
+                [product.name, product.amount, product.ean]))
+            : await sql(new Request(
+                `update products set name = ?, amount = ?, location = ? where ean = ?;`, 
+                [product.name, product.amount, product.ean]))
         return res
     }
 

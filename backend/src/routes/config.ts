@@ -37,7 +37,7 @@ export class Routes {
         this.app.route(`/${version}/employees`)
             .get(Controller.findAll)
             .post(
-                // e.g. ?username=wolf?password=hunter2?firstname=Timo?lastname=Wolf?permissions=1
+                // e.g. ?username=wolf&password=hunter2&firstname=Timo&lastname=Wolf&permissions=1
                 Controller.createEmployee
             )
         
@@ -48,13 +48,14 @@ export class Routes {
         this.app.route(`/${version}/products`)
             .get(Controller.findAll)
             .post(
-                // e.g. ?ean=1234567890123?name=Superglue?amount=10
+                // e.g. ?ean=1234567890123&name=Superglue&amount=10
                 Controller.createProduct
             )
         
-        this.app.route(`/${version}/products/:ean`)
+        this.app.route(`/${version}/products/:id`)
+            .get(Controller.findProduct)
             .put(Controller.updateProduct)
-            .delete
+            .delete(Controller.deleteOne)
             
         this.app.route(`/${version}/orders`)
             .get(Controller.findAll)

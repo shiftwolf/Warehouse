@@ -1,9 +1,7 @@
 import mariadb from "mariadb"
 
 export class Request {
-    query
-    params
-    constructor(query : string, params? : string[]) {
+    constructor(readonly query : string, readonly params? : string[]) {
         this.query = query
         this.params = params !== undefined ?  params : []
     }
@@ -21,6 +19,7 @@ const pool = mariadb.createPool({
 export const sql = async (request : Request) => {
     const conn = await pool.getConnection()
     const rows = await conn.query(request.query, request.params)
+    conn.end()
     return rows
 }
 
@@ -31,6 +30,7 @@ export const sequentialSQL = async (requests : Request[]) : Promise<any[]> => {
     result = requests.map(async req => {
         return await conn.query(req.query, req.params)
     })
+    conn.end()
     return result
 }
 
