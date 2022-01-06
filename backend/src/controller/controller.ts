@@ -87,7 +87,8 @@ export abstract class Controller {
         && typeof req.query.amount === "string") {
             const result = await Model.createProduct(
                 new Product(req.query.ean, req.query.name, req.query.amount,
-                     typeof req.query.location === "string" 
+                     typeof req.query.location === "string" &&
+                     req.query.location.length > 0
                         ? req.query.location
                         : undefined
                 )
@@ -121,7 +122,8 @@ export abstract class Controller {
                         ? req.query.ean
                         : req.params.id, 
                         req.query.name, req.query.amount,
-                        typeof req.query.location === "string" 
+                        typeof req.query.location === "string" &&
+                        req.query.location.length > 0
                         ? req.query.location
                         : undefined
                ))
@@ -133,13 +135,14 @@ export abstract class Controller {
     static async createCustomer(req : express.Request, res : express.Response) {
         console.log("createCustomer")
         if (typeof req.query.name === "string" && typeof req.query.country === "string"
-        && typeof req.query.adress1 === "string") {
+        && typeof req.query.address1 === "string" && typeof req.query.city === "string") {
             // Note that some values are optional, therefore can be "NULL"
             const customer = new Customer (
-                req.query.name, req.query.country, req.query.adress1,
-                req.query.adress2 === "string" ? req.query.adress2 : "NULL",
-                req.query.state === "string" ? req.query.state : "NULL",
-                req.query.zipcode === "string" ? req.query.zipcode : "NULL"
+                req.query.name, req.query.country, req.query.address1,
+                typeof req.query.address2 === "string" ? req.query.address2 : "NULL",
+                req.query.city,
+                typeof req.query.state === "string" ? req.query.state : "NULL",
+                typeof req.query.zipcode === "string" ? req.query.zipcode : "NULL"
             )
             const result = await Model.createCustomer(customer)
             res.status(201).send(result)
@@ -150,11 +153,13 @@ export abstract class Controller {
     static async updateCustomer(req : express.Request, res : express.Response) {
         console.log("updateCustomer")
         if (typeof req.query.name === "string" && typeof req.query.country === "string"
-        && typeof req.query.address1 === "string" && typeof req.params.id === "string") {
+        && typeof req.query.address1 === "string" && typeof req.params.id === "string"
+        && typeof req.query.city === "string") {
             // Note that some values are optional, therefore can be "NULL"
             const customer = new Customer (
                 req.query.name, req.query.country, req.query.address1,
                 req.query.address2 === "string" ? req.query.address2 : "NULL",
+                req.query.city,
                 req.query.state === "string" ? req.query.state : "NULL",
                 req.query.zipcode === "string" ? req.query.zipcode : "NULL"
             )
@@ -164,8 +169,9 @@ export abstract class Controller {
             res.status(400).send(Controller.errMessage)
         }
     }
+
     static async findOrderContents(req : express.Request, res : express.Response) {
-        console.log("other")
+        console.log("orderPreview")
         if (typeof req.params.fkOrderID === "string") {
             const result = await Model.findOrderContents(req.params.fkOrderID)
             res.status(200).send(result)
@@ -173,6 +179,13 @@ export abstract class Controller {
             res.status(400).send(Controller.errMessage)
         }
     }
+
+    static async findOrderPreviews(req : express.Request, res : express.Response) {
+        console.log("other")
+        const result = await Model.findOrderPreviews()
+        res.status(200).send(result)
+    }
+
     static async createOrder(req : express.Request, res : express.Response) {
         console.log("createOrder")
         if (typeof req.body === "object" && req.body !== null) {

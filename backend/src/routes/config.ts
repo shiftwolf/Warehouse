@@ -63,6 +63,9 @@ export class Routes {
                 // see order.ts
                 Controller.createOrder
             )
+
+        this.app.route(`/${version}/orderPreviews`)
+            .get(Controller.findOrderPreviews)
         
         this.app.route(`/${version}/order_contents/:fkOrderID`)   
             .get(Controller.findOrderContents)

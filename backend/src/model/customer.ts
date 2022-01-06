@@ -7,6 +7,7 @@ export class Customer {
         readonly country : string, 
         readonly address1 : string, 
         readonly address2 : string,
+        readonly city : string,
         readonly state : string, 
         readonly zipcode : string
         ) 

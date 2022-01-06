@@ -1,4 +1,4 @@
-import { sql, Request, sequentialSQL } from "../connectors/db"
+import { sql, sequentialSQL, Request } from "../connectors/db"
 import { Customer } from "./customer"
 import { Order, OrderContent } from "../model/order"
 import { Product } from "./product"
@@ -44,7 +44,7 @@ export abstract class Model {
                 `insert into products (ean, name, amount, location) values (?,?,?,?);`, 
                 [product.ean, product.name, product.amount, product.location]))
             : await sql(new Request(
-                `insert into products (ean, name, amount, location) values (?,?,?);`, 
+                `insert into products (ean, name, amount) values (?,?,?);`, 
                 [product.ean, product.name, product.amount]))
         return res
     }
@@ -55,29 +55,36 @@ export abstract class Model {
         return res
     }
 
+    static async findOrderPreviews () {
+        const res = await sql(new Request(
+            `select orders.id as orderId, orders.created_at as createdAt, orders.completed  as completed, customers.name as customerName, customers.id as customerId, employees.name as employeeName from (orders inner join customers on customers.id = orders.customer_id) left join employees on employees.id = orders.employee_id;`
+        ))
+        return res
+    }
+
     static async updateProduct (product : Product) {
-        const res = product.location !== undefined 
+        const res = product.location === undefined 
             ? await sql(new Request(
                 `update products set name = ?, amount = ? where ean = ?;`, 
                 [product.name, product.amount, product.ean]))
             : await sql(new Request(
                 `update products set name = ?, amount = ?, location = ? where ean = ?;`, 
-                [product.name, product.amount, product.ean]))
+                [product.name, product.amount, product.location, product.ean]))
         return res
     }
 
     static async createCustomer (customer : Customer) {
         const res = await sql(new Request(
-            `insert into customers (name, country, address1, address2, state, zipcode) values (?,?,?,?,?,?);`, 
+            `insert into customers (name, country, address1, address2, state, zipcode, city) values (?,?,?,?,?,?,?);`, 
             [customer.name, customer.country, customer.address1, 
                 customer.address2, customer.state, customer.zipcode]))
         return res
     }
     static async updateCustomer (customer : Customer, id : string) {
         const res = await sql(new Request(
-            `update customers set name = ?, country = ?, address1 = ?, address2 = ?, state = ?, zipcode = ? where id = ?;`, 
+            `update customers set name = ?, country = ?, address1 = ?, address2 = ?, state = ?, zipcode = ?, city = ? where id = ?;`, 
             [customer.name, customer.country, customer.address1, 
-                customer.address2, customer.state, customer.zipcode, id]))
+                customer.address2, customer.state, customer.zipcode, customer.city, id]))
         return res
     }
     static async findOrderContents (orderID : string) {
