@@ -65,7 +65,7 @@ export abstract class Model {
 
     static async findOrderDetails (orderID : string) {
         let res = await sql(new Request(
-            `select order_row.id orderId, order_row.created_at orderCreatedAt, order_row.completed orderCompleted, customers.id customerId, customers.name customerName, customers.country customerCountry, customers.state customerState, customers.zipcode customerZipcode, customers.address1 customerAddress1, customers.address2 customerAddress2, customers.city customerCity, employees.name employeeName,JSON_ARRAYAGG(JSON_OBJECT("productEan", products.ean,"productName", products.name,"productAmount", products.amount, "productLocation", products.location)) orderContents from ((((select * from orders where orders.id = ?) order_row inner join customers on customers.id = order_row.customer_id) left join employees on employees.id = order_row.employee_id) inner join order_contents on order_row.id = order_contents.order_id) inner join products on products.ean = order_contents.product_ean;`
+            `select order_row.id orderId, order_row.created_at orderCreatedAt, order_row.completed orderCompleted, customers.id customerId, customers.name customerName, customers.country customerCountry, customers.state customerState, customers.zipcode customerZipcode, customers.address1 customerAddress1, customers.address2 customerAddress2, customers.city customerCity, employees.name employeeName ,JSON_ARRAYAGG(JSON_OBJECT("ean", products.ean,"name", products.name,"amount", products.amount, "location", products.location)) orderContents from ((((select * from orders where orders.id = ?) order_row inner join customers on customers.id = order_row.customer_id) left join employees on employees.id = order_row.employee_id) inner join order_contents on order_row.id = order_contents.order_id) inner join products on products.ean = order_contents.product_ean;`
             , [orderID]
         ))
         console.log(res)
@@ -92,7 +92,7 @@ export abstract class Model {
                 address1: res[0].customerAddress1,
                 address2: res[0].customerAddress2,
             },
-            orderContents: res[0].orderContents,
+            products: res[0].orderContents,
             employeeName: res[0].employeeName
         }
 
