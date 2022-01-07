@@ -150,6 +150,7 @@ export abstract class Controller {
             res.status(400).send(Controller.errMessage)
         }
     }
+    
     static async updateCustomer(req : express.Request, res : express.Response) {
         console.log("updateCustomer")
         if (typeof req.query.name === "string" && typeof req.query.country === "string"
@@ -171,7 +172,7 @@ export abstract class Controller {
     }
 
     static async findOrderContents(req : express.Request, res : express.Response) {
-        console.log("orderPreview")
+        console.log("orderContents")
         if (typeof req.params.fkOrderID === "string") {
             const result = await Model.findOrderContents(req.params.fkOrderID)
             res.status(200).send(result)
@@ -181,9 +182,30 @@ export abstract class Controller {
     }
 
     static async findOrderPreviews(req : express.Request, res : express.Response) {
-        console.log("other")
+        console.log("orderPreviews")
         const result = await Model.findOrderPreviews()
         res.status(200).send(result)
+    }
+
+    static async updateOrderCompletion(req : express.Request, res : express.Response) {
+        console.log("orderCompletion")
+        if (typeof req.params.id === "string" && typeof req.params.newState === "string") {
+            const result = await Model.updateOrderCompletion(req.params.id, req.params.newState)
+            res.status(200).send(result)
+        } else {
+            res.status(400).send(Controller.errMessage)
+        }
+        
+    }
+
+    static async findOrderDetails(req : express.Request, res : express.Response) {
+        console.log("orderDetails")
+        if (typeof req.params.id === "string") {
+            const result = await Model.findOrderDetails(req.params.id)
+            res.status(200).send(result)
+        } else {
+            res.status(400).send(Controller.errMessage)
+        }
     }
 
     static async createOrder(req : express.Request, res : express.Response) {

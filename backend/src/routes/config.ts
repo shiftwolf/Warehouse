@@ -4,7 +4,7 @@ import { Controller } from "../controller/controller"
 
 export class Routes {
     app : express.Application
-    name : string = "UserRoutes" 
+    name : string = "Routes" 
 
     constructor(app : express.Application) {
         this.app = app
@@ -66,6 +66,12 @@ export class Routes {
 
         this.app.route(`/${version}/orderPreviews`)
             .get(Controller.findOrderPreviews)
+        
+        this.app.route(`/${version}/orderCompletion/:id/:newState`)
+            .put(Controller.updateOrderCompletion)
+
+        this.app.route(`/${version}/orderDetails/:id`)
+            .get(Controller.findOrderDetails)
         
         this.app.route(`/${version}/order_contents/:fkOrderID`)   
             .get(Controller.findOrderContents)

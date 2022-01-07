@@ -7,6 +7,7 @@ import bcrypt from "bcrypt"
 
 
 export abstract class Model {
+    
     static async findAll (table : string) {
         const res = await sql(new Request(`select * from ${table};`))
         return res
@@ -57,7 +58,52 @@ export abstract class Model {
 
     static async findOrderPreviews () {
         const res = await sql(new Request(
-            `select orders.id as orderId, orders.created_at as createdAt, orders.completed  as completed, customers.name as customerName, customers.id as customerId, employees.name as employeeName from (orders inner join customers on customers.id = orders.customer_id) left join employees on employees.id = orders.employee_id;`
+            `select orders.id as orderId, orders.created_at as createdAt, orders.completed as completed, customers.name as customerName, customers.id as customerId, employees.name as employeeName from (orders inner join customers on customers.id = orders.customer_id) left join employees on employees.id = orders.employee_id;`
+        ))
+        return res
+    }
+
+    static async findOrderDetails (orderID : string) {
+        let res = await sql(new Request(
+            `select order_row.id orderId, order_row.created_at orderCreatedAt, order_row.completed orderCompleted, customers.id customerId, customers.name customerName, customers.country customerCountry, customers.state customerState, customers.zipcode customerZipcode, customers.address1 customerAddress1, customers.address2 customerAddress2, customers.city customerCity, employees.name employeeName,JSON_ARRAYAGG(JSON_OBJECT("productEan", products.ean,"productName", products.name,"productAmount", products.amount, "productLocation", products.location)) orderContents from ((((select * from orders where orders.id = ?) order_row inner join customers on customers.id = order_row.customer_id) left join employees on employees.id = order_row.employee_id) inner join order_contents on order_row.id = order_contents.order_id) inner join products on products.ean = order_contents.product_ean;`
+            , [orderID]
+        ))
+        console.log(res)
+        
+        // MariaDB stringifies the JSON of res[0].orderContents
+        // So here we extract orderContents, parse it to JSON again
+        // and put it back in to res
+        let orderContents = JSON.parse(res[0].orderContents)
+        res[0].orderContents = orderContents
+
+        const newres = {
+            order: {
+                id: res[0].orderId,
+                created_at: res[0].orderCreatedAt,
+                completed: res[0].orderCompleted
+            },
+            customer: {
+                id: res[0].customerId,
+                name: res[0].customerName,
+                country: res[0].customerCountry,
+                state: res[0].customerState,
+                zipcode: res[0].customerZipcode,
+                city: res[0].customerCity,
+                address1: res[0].customerAddress1,
+                address2: res[0].customerAddress2,
+            },
+            orderContents: res[0].orderContents,
+            employeeName: res[0].employeeName
+        }
+
+
+        return newres
+    }
+
+    static async updateOrderCompletion(orderID : string, newState : string) {
+        const res = await sql(new Request(
+            `update orders set completed = ? where id = ?;`,
+            [newState, orderID]
         ))
         return res
     }
@@ -80,6 +126,7 @@ export abstract class Model {
                 customer.address2, customer.state, customer.zipcode]))
         return res
     }
+
     static async updateCustomer (customer : Customer, id : string) {
         const res = await sql(new Request(
             `update customers set name = ?, country = ?, address1 = ?, address2 = ?, state = ?, zipcode = ?, city = ? where id = ?;`, 
@@ -87,6 +134,7 @@ export abstract class Model {
                 customer.address2, customer.state, customer.zipcode, customer.city, id]))
         return res
     }
+
     static async findOrderContents (orderID : string) {
         const res = await sql(new Request(`select * from order_contents where order_id = ?;`, [orderID]))
         return res
