@@ -212,7 +212,7 @@ export abstract class Controller {
         console.log("createOrder")
         if (typeof req.body === "object" && req.body !== null) {
             const order : Order = new Order(req.body)
-            const result = await Model.createOrder(req.body)
+            const result = await Model.createOrder(order)
             res.status(201).send(result)
         } else {
             res.status(400).send(Controller.errMessage)
