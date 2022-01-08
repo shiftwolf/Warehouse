@@ -1,5 +1,5 @@
 import { Model } from "../model/model";
-import { Order } from "../model/order";
+import { Order, IncomingOrder } from "../model/order";
 import { Customer } from "../model/customer"
 import { Product } from "../model/product"
 import { Employee } from "../model/employee"
@@ -150,7 +150,7 @@ export abstract class Controller {
             res.status(400).send(Controller.errMessage)
         }
     }
-    
+
     static async updateCustomer(req : express.Request, res : express.Response) {
         console.log("updateCustomer")
         if (typeof req.query.name === "string" && typeof req.query.country === "string"
@@ -211,6 +211,7 @@ export abstract class Controller {
     static async createOrder(req : express.Request, res : express.Response) {
         console.log("createOrder")
         if (typeof req.body === "object" && req.body !== null) {
+            const order : Order = new Order(req.body)
             const result = await Model.createOrder(req.body)
             res.status(201).send(result)
         } else {

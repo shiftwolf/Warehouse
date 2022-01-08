@@ -1,6 +1,6 @@
 import { sql, sequentialSQL, Request } from "../connectors/db"
 import { Customer } from "./customer"
-import { Order, OrderContent } from "../model/order"
+import { Order, OrderFormContent } from "../model/order"
 import { Product } from "./product"
 import { Employee } from "./employee"
 import bcrypt from "bcrypt"
@@ -65,7 +65,7 @@ export abstract class Model {
 
     static async findOrderDetails (orderID : string) {
         let res = await sql(new Request(
-            `select order_row.id orderId, order_row.created_at orderCreatedAt, order_row.completed orderCompleted, customers.id customerId, customers.name customerName, customers.country customerCountry, customers.state customerState, customers.zipcode customerZipcode, customers.address1 customerAddress1, customers.address2 customerAddress2, customers.city customerCity, employees.name employeeName ,JSON_ARRAYAGG(JSON_OBJECT("ean", products.ean,"name", products.name,"amount", products.amount, "location", products.location)) orderContents from ((((select * from orders where orders.id = ?) order_row inner join customers on customers.id = order_row.customer_id) left join employees on employees.id = order_row.employee_id) inner join order_contents on order_row.id = order_contents.order_id) inner join products on products.ean = order_contents.product_ean;`
+            `select order_row.id orderId, order_row.created_at orderCreatedAt, order_row.completed orderCompleted, customers.id customerId, customers.name customerName, customers.country customerCountry, customers.state customerState, customers.zipcode customerZipcode, customers.address1 customerAddress1, customers.address2 customerAddress2, customers.city customerCity, employees.name employeeName ,JSON_ARRAYAGG(JSON_OBJECT("ean", products.ean,"name", products.name, "orderedAmount", order_contents.amount, "location", products.location)) orderedProducts from ((((select * from orders where orders.id = ?) order_row inner join customers on customers.id = order_row.customer_id) left join employees on employees.id = order_row.employee_id) inner join order_contents on order_row.id = order_contents.order_id) inner join products on products.ean = order_contents.product_ean;`
             , [orderID]
         ))
         console.log(res)
@@ -73,10 +73,11 @@ export abstract class Model {
         // MariaDB stringifies the JSON of res[0].orderContents
         // So here we extract orderContents, parse it to JSON again
         // and put it back in to res
-        let orderContents = JSON.parse(res[0].orderContents)
-        res[0].orderContents = orderContents
+        let orderedProducts = JSON.parse(res[0].orderedProducts)
+        res[0].orderedProducts = orderedProducts
 
-        const newres = {
+        // Converted MariaDB fields to better readable JSON (sub)objects
+        const newres = [{
             order: {
                 id: res[0].orderId,
                 created_at: res[0].orderCreatedAt,
@@ -92,9 +93,9 @@ export abstract class Model {
                 address1: res[0].customerAddress1,
                 address2: res[0].customerAddress2,
             },
-            products: res[0].orderContents,
+            orderedProducts: res[0].orderedProducts,
             employeeName: res[0].employeeName
-        }
+        }]
 
 
         return newres
@@ -146,7 +147,7 @@ export abstract class Model {
             [order.employeeID, order.customerID]),
             new Request(`SET @id = LAST_INSERT_ID()`)
         ]
-        const contents : OrderContent[] = order.contents
+        const contents : OrderFormContent[] = order.contents
         const requests2 : Request[] = contents.map(content => {
             return new Request(`insert into order_contents (order_id, product_ean, amount) values (@id,?,?);`,
             [content.productEAN, content.amount])
