@@ -37,6 +37,7 @@ fun AddEditOrderView(
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
     ){
 
         OutlinedTextField(
@@ -55,23 +56,23 @@ fun AddEditOrderView(
         Spacer(modifier = Modifier.height(6.dp))
         Text(text = "Products", fontWeight = FontWeight.Bold)
 
-        LazyColumn {
-            items(count) { index ->
+        Column {
+            orderContents.forEach { orderContent ->
+                val index = orderContents.indexOf(orderContent)
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     OutlinedTextField(
-                        value = orderContents[index].productEan,
-                        onValueChange = {
-                            println("ean: $orderContents[index].productEan")
-                            orderContents[index].productEan = it },
+                        value = orderContents[index].productEan.value,
+                        onValueChange = { orderContents[index].productEan.value = it },
                         label = { Text("Product EAN") },
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
-                        value = orderContents[index].amount.toString(),
-                        onValueChange = { orderContents[index].amount = it },
+                        value = orderContents[index].amount.value,
+                        onValueChange = { orderContents[index].amount.value = it },
                         label = { Text("Product Amount") },
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.weight(1f)
@@ -107,7 +108,12 @@ fun AddEditOrderView(
                 enabled = true,
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
-                    // TODO
+                    viewModel.onEvent(OrderEvent.CreateOrder(
+                        customerId = customerIdField.value.toInt(),
+                        employeeId = employeeIdField.value.toInt(),
+                        orderContentsState = orderContents
+                    ))
+                    navController.navigate(View.Orders.route)
                 }
             ){
                 Text("Submit")

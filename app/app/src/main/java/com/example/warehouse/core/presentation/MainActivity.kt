@@ -1,5 +1,6 @@
 package com.example.warehouse.core.presentation
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,8 +22,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.warehouse.ui.theme.WarehouseTheme
 import com.example.warehouse.core.presentation.components.BottomNav
 import com.example.warehouse.core.presentation.components.Navigation
+import com.example.warehouse.core.presentation.components.TopBar
 import com.example.warehouse.core.presentation.util.View
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -32,60 +35,62 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            WarehouseTheme {
+            WarehouseTheme() {
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
 
                     val currentView = remember { mutableStateOf("") }
-                    val visibility = remember { mutableStateOf(true) }
+                    val buttonText = remember { mutableStateOf("") }
+                    val buttonVisibility = remember { mutableStateOf(true) }
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
                     when (navBackStackEntry?.destination?.route?.substringBefore("{")) {
                         View.Products.route -> {
                             currentView.value = "Products"
-                            visibility.value = true
+                            buttonText.value = "Add Product"
+                            buttonVisibility.value = true
                         }
                         View.Orders.route -> {
                             currentView.value = "Orders"
-                            visibility.value = true
+                            buttonText.value = "Add Order"
+                            buttonVisibility.value = true
                         }
                         View.Customers.route -> {
                             currentView.value = "Customers"
-                            visibility.value = true
+                            buttonText.value = "Add Customer"
+                            buttonVisibility.value = true
                         }
                         View.Settings.route -> {
                             currentView.value = "Settings"
-                            visibility.value = false
+                            buttonVisibility.value = false
                         }
                         View.AddEditProduct.route -> {
-                            currentView.value = "Edit"
-                            visibility.value = false
+                            currentView.value = "Edit Product"
+                            buttonVisibility.value = false
                         }
                         View.AddEditCustomer.route -> {
-                            currentView.value = "Edit"
-                            visibility.value = false
+                            currentView.value = "Edit Customer"
+                            buttonVisibility.value = false
                         }
                         View.AddEditOrder.route -> {
-                            currentView.value = "Create"
-                            visibility.value = false
+                            currentView.value = "Create Order"
+                            buttonVisibility.value = false
                         }
                         View.OrderDetails.route -> {
                             currentView.value = "Details"
-                            visibility.value = false
+                            buttonVisibility.value = false
                         }
                     }
 
                     Scaffold(
-                        topBar = { TopAppBar(title = { Text(currentView.value) }) },
-                        floatingActionButton = {
-                            if (visibility.value) {
-                                FloatingActionButton(
-                                    onClick = { add(navBackStackEntry, navController) }
-                                ) {
-                                    Icon(Icons.Filled.Add,"")
-                            }
-                        } },
-                        floatingActionButtonPosition = FabPosition.Center,
+                        topBar = {
+                             TopBar(
+                                 title = currentView.value,
+                                 buttonText = buttonText.value,
+                                 hasButton = buttonVisibility.value,
+                                 navController = navController
+                             )
+                                 },
                         bottomBar = { BottomNav(navController) }
                     ) { innerPadding ->
                         Box(
@@ -96,20 +101,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private fun add(navBackStackEntry: NavBackStackEntry?, navController: NavController) {
-        when (navBackStackEntry?.destination?.route?.substringBefore("{")) {
-            View.Products.route -> {
-                navController.navigate(View.AddEditProduct.route + "?productEan=-1")
-            }
-            View.Orders.route -> {
-                navController.navigate(View.AddEditOrder.route + "?orderId=-1")
-            }
-            View.Customers.route -> {
-                navController.navigate(View.AddEditCustomer.route + "?customerId=-1")
             }
         }
     }

@@ -4,10 +4,7 @@ import com.example.warehouse.orders.domain.model.NewOrder
 import com.example.warehouse.orders.domain.model.OrderDetails
 import com.example.warehouse.orders.domain.model.OrderPreview
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface OrderRetrofitService {
 
@@ -24,6 +21,6 @@ interface OrderRetrofitService {
     )
 
     @POST("apiv1/orders")
-    suspend fun createOrder(newOrder: NewOrder)
+    suspend fun createOrder(@Body newOrder: NewOrder)
 
 }

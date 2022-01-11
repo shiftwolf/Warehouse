@@ -19,8 +19,6 @@ import com.example.warehouse.customers.presentation.customers_view.CustomerEvent
 import com.example.warehouse.customers.presentation.customers_view.CustomerViewModel
 
 
-
-
 @Composable
 fun CustomerCard(
     customer: Customer,

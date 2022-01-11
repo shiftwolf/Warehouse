@@ -11,12 +11,6 @@ import androidx.navigation.NavController
 import com.example.warehouse.products.presentation.products_view.components.ProductCard
 
 
-// TODO:
-// add font styles to Type.kt
-// add rounded corners style to Shape.kt
-// add colors to Color.kt (topBar bg color)
-// add icons
-
 
 @Composable
 fun ProductsView (

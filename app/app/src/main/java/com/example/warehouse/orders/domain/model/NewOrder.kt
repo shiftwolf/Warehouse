@@ -1,5 +1,6 @@
 package com.example.warehouse.orders.domain.model
 
+import androidx.compose.runtime.MutableState
 import com.google.gson.annotations.SerializedName
 
 data class NewOrder (
@@ -19,4 +20,9 @@ data class OrderContent(
 
     @SerializedName("amount")
     var amount: String
+)
+
+data class OrderContentState (
+    var productEan: MutableState<String>,
+    var amount: MutableState<String>
 )

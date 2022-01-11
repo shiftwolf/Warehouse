@@ -16,10 +16,6 @@ import com.example.warehouse.products.presentation.products_view.ProductEvent
 import com.example.warehouse.products.presentation.products_view.ProductViewModel
 import com.example.warehouse.core.presentation.util.View
 
-// TODO:
-// text style title
-// check EAN length & empty
-
 
 @Composable
 fun AddEditProductView(

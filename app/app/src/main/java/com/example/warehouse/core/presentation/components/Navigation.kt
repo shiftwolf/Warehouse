@@ -13,6 +13,7 @@ import com.example.warehouse.customers.presentation.customers_view.CustomersView
 import com.example.warehouse.orders.presentation.add_edit_order_view.AddEditOrderView
 import com.example.warehouse.orders.presentation.order_details_view.OrderDetailsView
 import com.example.warehouse.orders.presentation.orders_view.OrdersView
+import com.example.warehouse.settings.presentation.SettingsView
 
 @ExperimentalMaterialApi
 @Composable
@@ -33,7 +34,7 @@ fun Navigation(
             CustomersView(navController = navHostController)
         }
         composable(View.Settings.route) {
-
+            SettingsView()
         }
         composable(
             route = View.AddEditProduct.route + "{productEan}"

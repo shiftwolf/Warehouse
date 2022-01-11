@@ -1,5 +1,8 @@
 package com.example.warehouse.di
 
+import android.app.Application
+import android.content.Context
+import android.media.AsyncPlayer
 import com.example.warehouse.customers.data.repo.CustomerRepoImpl
 import com.example.warehouse.customers.data.source.CustomerRetrofitService
 import com.example.warehouse.customers.domain.repo.CustomerRepo
@@ -15,6 +18,7 @@ import com.example.warehouse.products.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
