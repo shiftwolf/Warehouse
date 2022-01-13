@@ -21,7 +21,7 @@ fun BottomNav(
         View.Orders,
         View.Products,
         View.Customers,
-        View.Settings
+        // View.Settings
     )
 
     BottomNavigation {

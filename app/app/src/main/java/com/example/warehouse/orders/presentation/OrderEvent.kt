@@ -1,6 +1,6 @@
 package com.example.warehouse.orders.presentation
 
-import com.example.warehouse.orders.domain.model.NewOrder
+import com.example.warehouse.orders.domain.model.OrderContentState
 
 sealed class OrderEvent {
     data class ChangeCompletedValue(
@@ -10,5 +10,9 @@ sealed class OrderEvent {
 
     object AddProductInCreateOrder: OrderEvent()
 
-    data class CreateOrder(val newOrder: NewOrder): OrderEvent()
+    data class CreateOrder(
+        val customerId: Int,
+        val employeeId: Int,
+        val orderContentsState: List<OrderContentState>
+        ): OrderEvent()
 }

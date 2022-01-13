@@ -40,7 +40,6 @@ class OrderDetailsViewModel
 
             viewModelScope.launch {
                 try {
-                    println("OrderDetailsView init")
                     orderDetails = orderUseCases.getOrderDetails(currentId)!!
                 } catch(e : Throwable) {
                     Log.d(ContentValues.TAG, "OrderDetailsViewModel init err: " + e.message)
