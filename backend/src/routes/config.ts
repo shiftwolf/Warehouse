@@ -63,6 +63,10 @@ export class Routes {
                 // see order.ts
                 Controller.createOrder
             )
+        
+        this.app.route(`/${version}/orders/:id`)
+            .delete(Controller.deleteOne)
+
 
         this.app.route(`/${version}/orderPreviews`)
             .get(Controller.findOrderPreviews)
