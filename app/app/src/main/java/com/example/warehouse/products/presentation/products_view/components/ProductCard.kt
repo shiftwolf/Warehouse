@@ -18,7 +18,6 @@ import com.example.warehouse.products.presentation.products_view.ProductViewMode
 import com.example.warehouse.core.presentation.util.View
 
 
-
 @Composable
 fun ProductCard(
     product: Product,

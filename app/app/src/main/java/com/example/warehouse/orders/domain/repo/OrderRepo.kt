@@ -15,4 +15,6 @@ interface OrderRepo {
 
     suspend fun createOrder(newOrder: NewOrder)
 
+    suspend fun deleteOrder(order: OrderPreview)
+
 }

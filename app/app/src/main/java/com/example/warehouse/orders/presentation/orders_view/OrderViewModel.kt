@@ -31,12 +31,24 @@ class OrderViewModel
     }
 
     fun onEvent(event: OrderEvent) {
-        if (event is OrderEvent.ChangeCompletedValue) {
-            viewModelScope.launch {
-                try {
-                    orderUseCases.updateOrderCompletedValue(event.orderId, event.newValue)
-                } catch (e: Throwable) {
-                    Log.d(ContentValues.TAG, "Order onEvent changeCompleted err: " + e.message)
+        when (event) {
+            is OrderEvent.ChangeCompletedValue -> {
+                viewModelScope.launch {
+                    try {
+                        orderUseCases.updateOrderCompletedValue(event.orderId, event.newValue)
+                    } catch (e: Throwable) {
+                        Log.d(ContentValues.TAG, "Order onEvent changeCompleted err: " + e.message)
+                    }
+                }
+            }
+            is OrderEvent.DeleteOrder -> {
+                viewModelScope.launch {
+                    try {
+                        orders.remove(event.order)
+                        orderUseCases.deleteOrder(event.order)
+                    } catch (e: Throwable) {
+                        Log.d(ContentValues.TAG, "Order onEvent delete err: " + e.message)
+                    }
                 }
             }
         }

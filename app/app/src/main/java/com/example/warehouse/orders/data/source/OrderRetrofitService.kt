@@ -23,4 +23,6 @@ interface OrderRetrofitService {
     @POST("apiv1/orders")
     suspend fun createOrder(@Body newOrder: NewOrder)
 
+    @DELETE("apiv1/orders/{orderId}")
+    suspend fun deleteOrder(@Path("orderId") orderId: Int)
 }

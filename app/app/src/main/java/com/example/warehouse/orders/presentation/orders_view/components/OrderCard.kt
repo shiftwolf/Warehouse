@@ -15,6 +15,7 @@ import com.example.warehouse.core.presentation.util.View
 import com.example.warehouse.orders.domain.model.OrderPreview
 import com.example.warehouse.orders.presentation.OrderEvent
 import com.example.warehouse.orders.presentation.orders_view.OrderViewModel
+import com.example.warehouse.products.presentation.products_view.ProductEvent
 
 
 @ExperimentalMaterialApi
@@ -30,7 +31,6 @@ fun OrderCard(
         order.customerName,
         order.employeeName
     )
-
 
     val completedState = remember { mutableStateOf(order.completed != 0) }
 
@@ -89,7 +89,7 @@ fun OrderCard(
                         .weight(2.5f)
                         .padding(2.dp)
                         .fillMaxHeight(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
+                    verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Button(
@@ -102,7 +102,15 @@ fun OrderCard(
                     ) {
                         Text("Details")
                     }
-
+                    Button(
+                        onClick = {
+                            viewModel.onEvent(OrderEvent.DeleteOrder(order))
+                        },
+                        modifier = Modifier.defaultMinSize(90.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Delete")
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.warehouse.di
 import android.app.Application
 import android.content.Context
 import android.media.AsyncPlayer
+import com.example.warehouse.WarehouseApp
 import com.example.warehouse.customers.data.repo.CustomerRepoImpl
 import com.example.warehouse.customers.data.source.CustomerRetrofitService
 import com.example.warehouse.customers.domain.repo.CustomerRepo
@@ -11,6 +12,7 @@ import com.example.warehouse.orders.data.repo.OrderRepoImpl
 import com.example.warehouse.orders.data.source.OrderRetrofitService
 import com.example.warehouse.orders.domain.repo.OrderRepo
 import com.example.warehouse.orders.domain.use_case.*
+import com.example.warehouse.orders.presentation.OrderEvent
 import com.example.warehouse.products.data.repo.ProductRepoImpl
 import com.example.warehouse.products.data.source.ProductRetrofitService
 import com.example.warehouse.products.domain.repo.ProductRepo
@@ -24,7 +26,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-const val BASE_URL = "http://192.168.178.25:3000/"
+var baseUrl = WarehouseApp.Companion.baseUrl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -35,7 +37,7 @@ object AppModule {
     fun provideProductRepo(): ProductRepo {
         return ProductRepoImpl(
             Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ProductRetrofitService::class.java)
@@ -59,7 +61,7 @@ object AppModule {
     fun provideCustomerRepo(): CustomerRepo {
         return CustomerRepoImpl(
             Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(CustomerRetrofitService::class.java)
@@ -83,7 +85,7 @@ object AppModule {
     fun provideOrderRepo(): OrderRepo {
         return OrderRepoImpl(
             Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(OrderRetrofitService::class.java)
@@ -97,7 +99,8 @@ object AppModule {
             GetOrderPreviewsUseCase(repo),
             UpdateOrderCompletedUseCase(repo),
             GetOrderDetailsUseCase(repo),
-            CreateOrderUseCase(repo)
+            CreateOrderUseCase(repo),
+            DeleteOrderUseCase(repo)
         )
     }
 

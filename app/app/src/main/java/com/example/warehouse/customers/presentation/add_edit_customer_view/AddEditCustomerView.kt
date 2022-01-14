@@ -22,8 +22,7 @@ import com.example.warehouse.products.presentation.products_view.ProductViewMode
 @Composable
 fun AddEditCustomerView(
     navController: NavController,
-    viewModel: AddEditCustomerViewModel = hiltViewModel(),
-    customerViewModel: CustomerViewModel = hiltViewModel()
+    viewModel: AddEditCustomerViewModel = hiltViewModel()
 ) {
 
     val nameField = viewModel.nameState

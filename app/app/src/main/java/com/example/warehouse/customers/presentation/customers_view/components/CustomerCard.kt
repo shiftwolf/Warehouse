@@ -25,8 +25,9 @@ fun CustomerCard(
     navController: NavController,
     viewModel: CustomerViewModel = hiltViewModel()
 ) {
-    val attributes = listOf( "Name", "Address 1", "Address 2", "Zip Code", "City", "State", "Country" )
+    val attributes = listOf( "ID", "Name", "Address 1", "Address 2", "ZIP Code", "City", "State", "Country" )
     val values = listOf(
+        customer.id.toString(),
         customer.name,
         customer.address1,
         customer.address2,

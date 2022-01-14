@@ -4,5 +4,6 @@ data class OrderUseCases (
     val getOrderPreviews: GetOrderPreviewsUseCase,
     val updateOrderCompletedValue: UpdateOrderCompletedUseCase,
     val getOrderDetails: GetOrderDetailsUseCase,
-    val createOrder: CreateOrderUseCase
+    val createOrder: CreateOrderUseCase,
+    val deleteOrder: DeleteOrderUseCase
     )

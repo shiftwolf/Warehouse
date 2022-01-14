@@ -26,4 +26,8 @@ class OrderRepoImpl(
     override suspend fun createOrder(newOrder: NewOrder) {
         retrofit.createOrder(newOrder)
     }
+
+    override suspend fun deleteOrder(order: OrderPreview) {
+        retrofit.deleteOrder(order.orderId)
+    }
 }
